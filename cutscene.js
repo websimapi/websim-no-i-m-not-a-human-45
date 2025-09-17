@@ -158,7 +158,9 @@ async function transitionToScene(sceneIndex) {
       if (srcCanvas.width !== w || srcCanvas.height !== h) { srcCanvas.width = w; srcCanvas.height = h; }
       sctx.clearRect(0,0,w,h);
       const drawCover = (img) => { const iw=img.naturalWidth||img.width, ih=img.naturalHeight||img.height; const s=Math.max(w/iw,h/ih); const dw=iw*s, dh=ih*s; sctx.drawImage(img, (w-dw)/2, (h-dh)/2, dw, dh); };
-      const srcImg = (liveGifEl && liveGifEl.complete) ? liveGifEl : sceneAssets.gif; // GIF only
+      // First draw the original image as a base for any transparent pixels, then the animated GIF on top
+      drawCover(sceneAssets.img);
+      const srcImg = (liveGifEl && liveGifEl.complete) ? liveGifEl : sceneAssets.gif;
       drawCover(srcImg);
     };
     posterizeInstance = applyPosterizeToImage(canvas, sceneAssets.gif, 4.0, 0.22, { sourceCanvas: srcCanvas, updateSource });
