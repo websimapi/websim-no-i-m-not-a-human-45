@@ -157,10 +157,11 @@ async function transitionToScene(sceneIndex) {
       const w = Math.floor(innerWidth * dpr), h = Math.floor(innerHeight * dpr);
       if (srcCanvas.width !== w || srcCanvas.height !== h) { srcCanvas.width = w; srcCanvas.height = h; }
       sctx.clearRect(0,0,w,h);
-      const drawCover = (img) => { const iw=img.naturalWidth, ih=img.naturalHeight; const s=Math.max(w/iw,h/ih); const dw=iw*s, dh=ih*s; sctx.drawImage(img, (w-dw)/2, (h-dh)/2, dw, dh); };
-      drawCover(sceneAssets.img); drawCover(liveGifEl || sceneAssets.gif); // use live DOM gif for animation frames
+      const drawCover = (img) => { const iw=img.naturalWidth||img.width, ih=img.naturalHeight||img.height; const s=Math.max(w/iw,h/ih); const dw=iw*s, dh=ih*s; sctx.drawImage(img, (w-dw)/2, (h-dh)/2, dw, dh); };
+      const srcImg = (liveGifEl && liveGifEl.complete) ? liveGifEl : sceneAssets.gif; // GIF only
+      drawCover(srcImg);
     };
-    posterizeInstance = applyPosterizeToImage(canvas, sceneAssets.img, 4.0, 0.22, { sourceCanvas: srcCanvas, updateSource });
+    posterizeInstance = applyPosterizeToImage(canvas, sceneAssets.gif, 4.0, 0.22, { sourceCanvas: srcCanvas, updateSource });
     if (posterizeInstance) posterizeInstance.setFogCoverage(1.5);
     const canvasWrapper = document.getElementById('cutscene-canvas-wrapper');
     if (scene.animationClass && canvasWrapper) canvasWrapper.classList.add(scene.animationClass);
